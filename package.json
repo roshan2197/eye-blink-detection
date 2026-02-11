@@ -1,12 +1,15 @@
 {
   "name": "eye-blink-detection",
   "version": "0.0.0",
+  "main": "electron/main.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "electron:dev": "concurrently \"ng serve\" \"wait-on http://localhost:4200 && electron .\"",
+    "electron:build": "ng build && electron-builder"
   },
   "prettier": {
     "printWidth": 100,
@@ -29,6 +32,8 @@
     "@angular/forms": "^21.1.0",
     "@angular/platform-browser": "^21.1.0",
     "@angular/router": "^21.1.0",
+    "@mediapipe/camera_utils": "^0.3.1640029074",
+    "@mediapipe/face_mesh": "^0.4.1633559619",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -37,10 +42,15 @@
     "@angular/cli": "^21.1.2",
     "@angular/compiler-cli": "^21.1.0",
     "@tailwindcss/postcss": "^4.1.12",
+    "@types/dom-mediacapture-record": "^1.0.22",
+    "concurrently": "^8.2.2",
+    "electron": "^28.2.0",
+    "electron-builder": "^24.13.3",
     "jsdom": "^27.1.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.12",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "wait-on": "^7.2.0"
   }
 }

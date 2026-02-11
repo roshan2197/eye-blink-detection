@@ -1,11 +1,19 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { DashboardComponent } from './dashboard/dashboard';
+
+declare global {
+  interface Window {
+    blinkAPI?: {
+      notify: () => void;
+    };
+  }
+}
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [DashboardComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
   protected readonly title = signal('eye-blink-detection');
