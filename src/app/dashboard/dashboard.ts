@@ -71,10 +71,10 @@ import { Chart } from 'chart.js';
             >
               <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent"></div>
 
-              <div class="relative aspect-video">
+              <div class="relative aspect-video bg-black">
                 <video
                   #video
-                  class="absolute inset-0 h-full w-full object-cover"
+                  class="absolute inset-0 h-full w-full object-contain"
                   width="640"
                   height="480"
                   autoplay
@@ -82,7 +82,7 @@ import { Chart } from 'chart.js';
                   playsinline
                 ></video>
 
-                <canvas #canvas class="absolute inset-0 h-full w-full" width="640" height="480"></canvas>
+                <canvas #canvas class="absolute inset-0 h-full w-full object-contain" width="640" height="480"></canvas>
 
                 @if (alertVisible()) {
                   <div
