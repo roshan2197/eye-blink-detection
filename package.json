@@ -1,6 +1,6 @@
 {
   "name": "eye-blink-detection",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "electron/main.js",
   "scripts": {
     "ng": "ng",

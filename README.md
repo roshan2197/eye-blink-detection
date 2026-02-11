@@ -66,26 +66,6 @@ npm run electron:build:mac
 npm run electron:build:win
 ```
 
-Generated desktop packages are written to `release/`.
-
-## Deploying web app to GitHub Pages
-
-This repository includes `.github/workflows/deploy-gh-pages.yml` which deploys automatically when `main` is updated.
-
-### One-time GitHub setup
-
-1. Push this repository (with workflow) to GitHub.
-2. Open **Settings → Pages**.
-3. Set **Source** to **Deploy from a branch**.
-4. Select branch `gh-pages` and folder `/ (root)`.
-5. Save.
-
-After the next successful workflow run, the app URL format is:
-
-```text
-https://<your-github-username>.github.io/eye-blink-detection/
-```
-
 ## Downloading desktop apps
 
 ### For End Users
