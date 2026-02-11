@@ -1,9 +1,14 @@
 import { app, BrowserWindow, Tray, Menu, Notification } from 'electron';
+import * as fs from 'fs';
 import * as path from 'path';
 import { ipcMain } from 'electron';
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
+
+function getRendererEntryPath() {
+  return path.join(app.getAppPath(), 'dist', 'eye-blink-detection', 'browser', 'index.html');
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -16,9 +21,11 @@ function createWindow() {
 
   const isDev = !app.isPackaged;
 
-  mainWindow.loadURL(
-    isDev ? 'http://localhost:4200' : `file://${path.join(__dirname, '../dist/index.html')}`,
-  );
+  if (isDev) {
+    mainWindow.loadURL('http://localhost:4200');
+  } else {
+    mainWindow.loadFile(getRendererEntryPath());
+  }
 
   mainWindow.on('close', (e) => {
     e.preventDefault();
@@ -26,21 +33,13 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
-  // Enable auto-start
-  app.setLoginItemSettings({
-    openAtLogin: true,
-    openAsHidden: true,
-  });
-
-  createWindow();
-
-  if (app.getLoginItemSettings().wasOpenedAtLogin) {
-    mainWindow?.hide();
+function createTray() {
+  const trayIconPath = path.join(__dirname, 'tray.png');
+  if (!fs.existsSync(trayIconPath)) {
+    return;
   }
 
-  tray = new Tray(path.join(__dirname, 'tray.png'));
-
+  tray = new Tray(trayIconPath);
   tray.setContextMenu(
     Menu.buildFromTemplate([
       {
@@ -60,10 +59,29 @@ app.whenReady().then(() => {
       },
       {
         label: 'Quit',
-        click: () => app.exit(),
+        click: () => {
+          mainWindow?.removeAllListeners('close');
+          app.quit();
+        },
       },
     ]),
   );
+}
+
+app.whenReady().then(() => {
+  // Enable auto-start
+  app.setLoginItemSettings({
+    openAtLogin: true,
+    openAsHidden: true,
+  });
+
+  createWindow();
+
+  if (app.getLoginItemSettings().wasOpenedAtLogin) {
+    mainWindow?.hide();
+  }
+
+  createTray();
 });
 
 app.on('window-all-closed', () => {

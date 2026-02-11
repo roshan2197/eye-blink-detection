@@ -9,7 +9,10 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "electron:dev": "concurrently \"ng serve\" \"wait-on http://localhost:4200 && electron .\"",
-    "electron:build": "ng build && electron-builder"
+    "electron:build": "npm run build && electron-builder",
+    "electron:build:mac": "npm run build && electron-builder --mac dmg zip",
+    "electron:build:win": "npm run build && electron-builder --win nsis portable",
+    "electron:build:linux": "npm run build && electron-builder --linux AppImage deb"
   },
   "prettier": {
     "printWidth": 100,
@@ -53,5 +56,39 @@
     "typescript": "~5.9.2",
     "vitest": "^4.0.8",
     "wait-on": "^7.2.0"
-  }
+  },
+  "build": {
+    "appId": "com.eyeblink.detection",
+    "productName": "Eye Blink Detection",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.healthcare-fitness",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
+    }
+  },
+  "description": "Blink detection reminder app built with Angular and Electron.",
+  "author": "Eye Blink Detection contributors"
 }
