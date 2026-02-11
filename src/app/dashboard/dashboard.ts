@@ -5,6 +5,8 @@ import { BlinkDetectionService } from '../core/services/blink-detection';
 import { AlertService } from '../core/services/alert';
 import { CommonModule } from '@angular/common';
 import { SettingsService } from '../core/services/settings';
+import { AnalyticsService } from '../core/services/analytics';
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-dashboard',
@@ -67,6 +69,17 @@ import { SettingsService } from '../core/services/settings';
           <span>Monitoring Enabled</span>
         </div>
       </div>
+      <div class="mt-8 bg-gray-900 p-4 rounded-xl text-white">
+        <h3 class="text-lg font-semibold mb-2">Blink Analytics</h3>
+
+        <canvas #blinkChart height="120"></canvas>
+
+        <div class="mt-4 text-sm text-gray-300">
+          <div>Total blinks today: {{ summary?.totalBlinks }}</div>
+          <div>Avg blink rate: {{ summary?.avgBlinkRate }} / min</div>
+          <div>Alerts triggered: {{ summary?.alertsTriggered }}</div>
+        </div>
+      </div>
     </div>
   `,
 })
@@ -80,6 +93,7 @@ export class DashboardComponent implements AfterViewInit {
     protected blinkService: BlinkDetectionService,
     private alertService: AlertService,
     protected settings: SettingsService,
+    private analytics: AnalyticsService,
   ) {
     const s = this.settings.current;
   }
@@ -90,6 +104,36 @@ export class DashboardComponent implements AfterViewInit {
   private faceLastSeenTime = Date.now();
   private FACE_LOST_TIMEOUT = 3000; // 3 seconds
   private isFaceVisible = true;
+
+  @ViewChild('blinkChart') chartRef!: ElementRef<HTMLCanvasElement>;
+
+  summary: any;
+  chart: any;
+
+  renderChart() {
+    const data = this.analytics.getBlinkRateSeries(30);
+
+    this.chart = new Chart(this.chartRef.nativeElement, {
+      type: 'line',
+      data: {
+        labels: data.map((d) => new Date(d.minuteStart).toLocaleTimeString()),
+        datasets: [
+          {
+            label: 'Blinks / minute',
+            data: data.map((d) => d.blinkCount),
+            tension: 0.3,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true },
+        },
+      },
+    });
+  }
 
   ngOnInit() {
     this.alertService.alert$.subscribe((value) => {
@@ -177,6 +221,7 @@ export class DashboardComponent implements AfterViewInit {
 
       if (blinked) {
         this.alertService.hideAlert();
+        this.analytics.recordBlink();
       }
 
       const shouldAlert = this.blinkService.checkInactivity();
@@ -184,6 +229,7 @@ export class DashboardComponent implements AfterViewInit {
       if (shouldAlert) {
         this.alertService.showAlert();
         window.blinkAPI?.notify();
+        this.analytics.recordAlert();
       }
 
       mapEye(leftEyeIdx).forEach((p) => {
@@ -210,5 +256,8 @@ export class DashboardComponent implements AfterViewInit {
     };
 
     requestAnimationFrame(processFrame);
+
+    this.renderChart();
+    this.summary = this.analytics.getTodaySummary();
   }
 }
