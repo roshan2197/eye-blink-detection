@@ -1,59 +1,105 @@
-# EyeBlinkDetection
+# Eye Blink Detection
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.2.
+Eye Blink Detection is an Angular + Electron application that monitors blink activity using the webcam and provides on-screen/desktop reminders.
 
-## Development server
+## Project structure
 
-To start a local development server, run:
+- **Web app (Angular)**: runs in browser and can be deployed to GitHub Pages.
+- **Desktop app (Electron)**: bundles the Angular app into installable apps for macOS and Windows.
 
-```bash
-ng serve
-```
+## Local development
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Prerequisites
 
-## Code scaffolding
+- Node.js 22+
+- npm 11+
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Install dependencies
 
 ```bash
-ng generate --help
+npm ci
 ```
 
-## Building
-
-To build the project run:
+### Run web app locally
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Run Electron app in dev mode
 
 ```bash
-ng test
+npm run electron:dev
 ```
 
-## Running end-to-end tests
+## Build commands
 
-For end-to-end (e2e) testing, run:
+### Build Angular web app
 
 ```bash
-ng e2e
+npm run build
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Build desktop installers locally
 
-## Additional Resources
+```bash
+npm run electron:build:mac
+npm run electron:build:win
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Generated desktop packages are written to `release/`.
+
+## Deploying web app to GitHub Pages
+
+This repository includes `.github/workflows/deploy-gh-pages.yml` which deploys automatically when `main` is updated.
+
+### One-time GitHub setup
+
+1. Push this repository (with workflow) to GitHub.
+2. Open **Settings → Pages**.
+3. Set **Source** to **Deploy from a branch**.
+4. Select branch `gh-pages` and folder `/ (root)`.
+5. Save.
+
+After the next successful workflow run, the app URL format is:
+
+```text
+https://<your-github-username>.github.io/eye-blink-detection/
+```
+
+## Downloading macOS and Windows desktop apps
+
+This repository includes `.github/workflows/build-electron-release.yml` to produce desktop binaries.
+
+### Option A: Automatic release downloads (recommended)
+
+1. Create and push a tag:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+2. The workflow builds macOS + Windows packages.
+3. Artifacts are attached to a GitHub Release for that tag.
+4. Users download installers from **Releases**.
+
+### Option B: Manual workflow run
+
+1. Go to **Actions → Build Desktop Apps (macOS + Windows)**.
+2. Click **Run workflow**.
+3. Download build outputs from the workflow artifacts.
+
+## Notes
+
+- Camera access (`getUserMedia`) works in desktop app and on GitHub Pages (HTTPS).
+- Angular production config disables font inlining to avoid CI failures when fetching external Google Fonts during build.
+
+## Useful scripts
+
+- `npm start` → Angular dev server
+- `npm run build` → Angular production build
+- `npm run electron:dev` → Angular + Electron dev mode
+- `npm run electron:build` → Generic desktop packaging
+- `npm run electron:build:mac` → macOS packages (`.dmg`, `.zip`)
+- `npm run electron:build:win` → Windows packages (`.exe`)
