@@ -22,7 +22,7 @@ The easiest way to get started:
 
 No installation needed:
 
-1. Visit: `https://<your-github-username>.github.io/eye-blink-detection/`
+1. Visit: `https://roshan2197.github.io/eye-blink-detection/`
 2. Click "Allow" when prompted for camera access
 3. Check the settings to adjust sensitivity and blink thresholds
 
